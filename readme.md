@@ -1,5 +1,5 @@
 ## 实时猫 Web SDK Demo 合集
-基于 [实时猫 JS SDK](https://shishimao.com) 开发的样例 Demo,Demo运行的服务器基于[Node](https://nodejs.org/en/)开发。
+基于 [实时猫 JS SDK](https://shishimao.com) 开发的样例 Demo,该Demo运行的服务器基于[Node](https://nodejs.org/en/)开发。
 
 ## 说明
 此样例用于演示使用`实时猫SDK`主要功能，访问实时猫开发者文档，查看[样例代码说明](http://docs.shishimao.com/03.%20web/03.%20demo.html)。
@@ -14,8 +14,8 @@
 7. 高级主题：屏幕分享
 
 ## 使用
-1. `git clone `
-2. `cd `
+1. `git clone https://github.com/RTCat/rtcat_web_sdk_demo_all.git`
+2. `cd rtcat_web_sdk_demo_all`
 3. `npm start`
 4. 打开浏览器，在地址栏输入`https://localhost:8080/`作为第一个客户端，忽略浏览器的安全证书错误，进入页面
 5. 从多个样例中选择一个进行测试
