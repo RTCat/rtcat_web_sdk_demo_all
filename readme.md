@@ -25,7 +25,7 @@
 
   谷歌商店地址：`https://chrome.google.com/webstore/detail/realtimecat-screensharing/kopddpjmdlllnpkpcphndjiaohbakkjb?hl=zh-CN&gl=US`  
 
-  国内地址：通过`https://shishimao.com/rooms/downloads/RealTimeCat-ScreenSharing-Extension_v0.2.0.crx` 
+  国内地址：`https://shishimao.com/rooms/downloads/RealTimeCat-ScreenSharing-Extension_v0.2.0.crx` 
 
 
 
