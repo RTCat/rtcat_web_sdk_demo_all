@@ -20,11 +20,12 @@
 4. 打开浏览器，在地址栏输入`https://localhost:8080/`作为第一个客户端，忽略浏览器的安全证书错误，进入页面
 5. 从多个样例中选择一个进行测试
 6. (多人通信类型的样例需要)再打开一个浏览器窗口，输入相同地址，作为第二个客户端
-7. (屏幕分享样例需要)请先安装屏幕分享插件
-谷歌商店地址：`https://chrome.google.com/webstore/detail/realtimecat-screensharing/kopddpjmdlllnpkpcphndjiaohbakkjb?hl=zh-CN&gl=US`
-国内地址：通过`https://shishimao.com/rooms/downloads/RealTimeCat-ScreenSharing-Extension_v0.2.0.crx`下载插件，并拖拽到浏览器`chrome://extensions`页面
-8. 可以在Config.js修改`API_KEY`、`SECRET`、`SESSION`，使用个人项目信息创建会话。获取方式请参考[实时猫开发者文档](http://docs.shishimao.com/02.%20getting-started/02.%20dashboard-and-projects.html#)
+7. (屏幕分享样例需要)请下载 `实时猫屏幕分享插件` ，并拖拽到浏览器`chrome://extensions`页面<br>
+谷歌商店地址：`https://chrome.google.com/webstore/detail/realtimecat-screensharing/kopddpjmdlllnpkpcphndjiaohbakkjb?hl=zh-CN&gl=US` 
+<br>
+国内地址：通过`https://shishimao.com/rooms/downloads/RealTimeCat-ScreenSharing-Extension_v0.2.0.crx`
 
+8. 可以在 [config.js](/js/config.js) 中修改`API_KEY`、`SECRET`、`SESSION`，使用个人项目信息创建会话。获取方式请参考[实时猫开发者文档](http://docs.shishimao.com/02.%20getting-started/02.%20dashboard-and-projects.html#)
 
 
 
