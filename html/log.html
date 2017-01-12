@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>错误信息和日志</title>
+    <style>
+        div{
+            float:left;
+        }
+        div.output {
+            background-color: #eee;
+            display: inline-block;
+            font-family: 'Inconsolata', 'Courier New', monospace;
+            font-size: 0.9em;
+            padding: 10px 10px 10px 25px;
+            position: relative;
+            top: 10px;
+            white-space: pre;
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+<div id="local-div">
+    <div id="local-player"></div>
+    <br>
+    <div id="local-log" class="output"></div>
+</div>
+
+<div id="remote">
+    <div id="remote-player"></div>
+    <br>
+    <div id="remote-log" class="output"></div>
+</div>
+
+</body>
+<script src="js/jquery.min.js"></script>
+<script src="js/realtimecat-0.4.0.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/rtcat-utils.js"></script>
+<script>
+    var session,stream;
+    var localLogDiv = document.getElementById('local-log');
+    var remoteLogDiv = document.getElementById('remote-log');
+
+    //获取本地视频流
+    stream = new RTCat.Stream();
+    stream.on('accepted',function () {
+        stream.play("local-player");
+        join();
+    });
+    stream.init();
+
+    //进入房间
+    function join() {
+        getSession().then(function (_session) {
+            session = _session;
+
+            session.on("connected", function(){
+                //连入会话，将本地流群发给其他客户端
+                session.send({stream:stream});
+            });
+            session.on('in', function (token) {
+                //检测到有客户端进入会话，将本地视频流发送给它
+                session.sendTo({to:token,stream:stream})
+            });
+
+            session.on('local',function (sender) {
+                sender.on('log',function (log) {
+                    localLogDiv.textContent = JSON.stringify(log,null,"         ");
+                });
+            });
+
+            session.on('remote', function (receiver) {
+                receiver.on('stream',function(stream){
+                    stream.play('remote-player');
+                });
+                receiver.on('log',function (log) {
+                    remoteLogDiv.textContent = JSON.stringify(log,null,"        ");
+                });
+            });
+            session.on('error',function (error) {
+                console.log(error);
+            });
+
+            session.connect();
+        }).catch(function (_error) {
+            console.log(_error);
+        });
+    }
+</script>
+</html>

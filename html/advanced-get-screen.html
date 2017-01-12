@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>屏幕分享</title>
+    <style>
+        div{
+            float:left;
+        }
+    </style>
+</head>
+<body>
+</body>
+<script src="js/jquery.min.js"></script>
+<script src="js/realtimecat-0.4.0.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/rtcat-utils.js"></script>
+
+<script>
+    var session,stream;
+
+    //获取本地屏幕分享流
+    stream = new RTCat.Stream({type:'screen'});
+    stream.on('accepted',function () {
+        stream.play("local");
+        join();
+    });
+    stream.init();
+
+    //进入房间
+    function join() {
+        getSession().then(function (_session) {
+            session = _session;
+
+            session.on("connected", function(){
+                //连入会话，将本地流群发给其他客户端
+                session.send({stream:stream});
+            });
+            session.on('in', function (token) {
+                //检测到有客户端进入会话，将本地视频流发送给它
+                session.sendTo({to:token,stream:stream})
+            });
+
+            session.on('remote', function (receiver) {
+                receiver.on('stream',function(stream){
+                    //获取远程流后，播放
+                    playStream(stream,receiver.getId());
+                });
+            });
+
+            session.connect();
+        }).catch(function (_error) {
+            console.log(_error);
+        });
+    }
+
+</script>
+</html>

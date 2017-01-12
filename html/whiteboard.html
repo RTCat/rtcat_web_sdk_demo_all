@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>互动白板</title>
+    <style>
+        canvas{
+            border: 1px grey solid;
+        }
+    </style>
+</head>
+<body>
+<canvas id="board" width="500px" height="500px">
+
+</canvas>
+</body>
+<script src="js/realtimecat-0.4.0.min.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/canvas.js"></script>
+<script src="js/config.js"></script>
+<script src="js/rtcat-utils.js"></script>
+
+<script>
+    var context = canvas.getContext('2d');
+    var session,stream;
+
+    getSession().then(function (_session) {
+        session = _session;
+
+        session.on('message',function (content) {
+            messageHandler(content);
+        });
+
+        session.connect();
+    }).catch(function (_error) {
+        console.log(_error);
+    });
+
+    function boardCoast(packet) {
+        session.broadcastMessage(packet);
+    }
+</script>
+</html>

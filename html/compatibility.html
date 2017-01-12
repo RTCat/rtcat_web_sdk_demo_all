@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>检测浏览器兼容性</title>
+    <style>
+        div.output {
+            background-color: #eee;
+            display: inline-block;
+            font-family: 'Inconsolata', 'Courier New', monospace;
+            font-size: 0.9em;
+            padding: 10px 10px 10px 25px;
+            position: relative;
+            top: 10px;
+            white-space: pre;
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+测试结果：
+<br>
+<div id="result" class="output">正在测试，请稍后</div>
+</body>
+<script src="js/realtimecat-0.4.0.min.js"></script>
+<script>
+
+    var resultDiv = document.getElementById("result");
+
+    var options = {
+        browser:true,
+        compatibility:true,
+        network:true
+    };
+
+    RTCat.detect(options).then(function (result) {
+        resultDiv.textContent = JSON.stringify(result, null, '    ');
+        console.log(result);
+    }).catch(function(error){
+        //返回错误，即 实时猫 JS SDK 不支持 此浏览器
+        resultDiv.textContent = JSON.stringify("实时猫 JS SDK 不支持 此浏览器", null, '    ');
+        console.log(error);
+    });
+
+
+    // RTCat.detect(options,function (message,error) {
+    //     if(error){
+    //           //返回错误，即 实时猫 JS SDK 不支持 此浏览器
+    //         console.log(error);
+    //     }else{
+    //           if(message.compatibility.data){
+    //                   //支持点对点数据
+    //           }
+    //           if(message.compatibility.screen){
+    //                   //支持屏幕分享
+    //           }
+    //     }
+    // });
+</script>
+</html>

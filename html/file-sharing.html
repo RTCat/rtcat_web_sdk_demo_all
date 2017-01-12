@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        #message{
+            width:310px;
+            height:300px;
+            border: 1px gray solid;
+            overflow: scroll;
+        }
+
+        #messageInput{
+            width: 300px;
+            height: 3em;
+            padding-left: 5px;
+            padding-right: 5px;
+            font-size: 1em;
+            text-align: center;
+        }
+
+        p{
+            margin-left: 5px;
+        }
+
+    </style>
+    <title>文字聊天与文件传输</title>
+</head>
+<body>
+<div id="message"></div><br>
+<input id="messageInput" placeholder="请在这里输入内容,按回车发送"><br><br>
+<input type="file" id="fileInput">
+</body>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/realtimecat-0.4.0.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/rtcat-utils.js"></script>
+
+<script>
+
+    var messageInput = $('#messageInput');
+    var fileInput = $('#fileInput');
+    var messageContent = $('#message');
+
+    var session;
+    var senders = {};
+
+    getSession().then(function (_session) {
+        session = _session;
+        session.on("connected", function () {
+            //建立数据通道
+            session.send({data:true});
+        });
+        session.on('in', function (token) {
+            //建立数据通道
+            session.sendTo({to:token,data:true})
+        });
+
+        session.on('local', function (sender) {
+            var id = sender.getReceiverToken();
+            sender.on('close',function () {
+                console.log("sender close");
+                delete senders[id]
+            });
+            senders[id] = sender;
+        });
+
+        session.on('remote', function (receiver) {
+            receiver.on('message', function (message) {
+                var name = receiver.getSenderToken().substr(0, 7);
+                displayMessage(name, message)
+            });
+            receiver.on('file', function (file) {
+                file.save();
+            });
+        });
+
+        session.connect();
+    }).catch(function (error) {
+        console.log(error);
+    });
+
+
+    function broadcastMessage(message) {
+        for(var i in senders){
+            senders[i].sendMessage(message);
+        }
+    }
+
+    function broadcastFile(file) {
+        for(var i in senders){
+            senders[i].sendFile(file);
+        }
+    }
+
+    function displayMessage(name,msg) {
+        messageContent.scrollTop(messageContent[0].scrollHeight);
+        messageContent.append('<p>'+name+' :'+msg+'</p>');
+    }
+
+    messageInput.keypress(function (event) {
+        if(event.keyCode == 13)
+        {
+            var message = messageInput.val().trim();
+
+            if(message != '')
+            {
+                messageInput.val("");
+            }
+            messageContent.scrollTop(messageContent[0].scrollHeight);
+            messageContent.append('<p>self :'+message+'</p>');
+
+            broadcastMessage(message);
+        }
+    });
+
+    fileInput.on('change',function (event) {
+        broadcastFile(event.target.files[0]);
+    });
+
+
+</script>
+</html>
