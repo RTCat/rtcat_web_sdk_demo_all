@@ -8,17 +8,19 @@
 <button id="getLocalStream">获得本地音视频</button>
 <div id="local"></div>
 </body>
-<script src="/js/realtimecat-0.4.0.min.js"></script>
+<script src="/js/realtimecat.min.js"></script>
 <script>
     var stream;
     var bt1 = document.querySelector('#getLocalStream');
     bt1.addEventListener('click',function () {
-        stream = new RTCat.Stream();
-        stream.on('accepted', function () {
+        stream = new RTCat.createStream({
+            size:{width:300,height:300},
+            fps:15,
+            type:RTCat.STREAM_TYPE.AV
+        }).then(function (stream) {
             //在 id 为 local 的 div 中播放本地流
             stream.play('local');
         });
-        stream.init();
     });
 
 

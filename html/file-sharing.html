@@ -33,7 +33,7 @@
 </body>
 
 <script src="js/jquery.min.js"></script>
-<script src="js/realtimecat-0.4.0.min.js"></script>
+<script src="js/realtimecat.min.js"></script>
 <script src="js/config.js"></script>
 <script src="js/rtcat-utils.js"></script>
 
@@ -48,10 +48,6 @@
 
     getSession().then(function (_session) {
         session = _session;
-        session.on("connected", function () {
-            //建立数据通道
-            session.send({data:true});
-        });
         session.on('in', function (token) {
             //建立数据通道
             session.sendTo({to:token,data:true})
@@ -74,9 +70,9 @@
             receiver.on('file', function (file) {
                 file.save();
             });
+//            receiver.response();
         });
-
-        session.connect();
+        session.send({data:true});
     }).catch(function (error) {
         console.log(error);
     });

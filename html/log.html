@@ -35,7 +35,7 @@
 
 </body>
 <script src="js/jquery.min.js"></script>
-<script src="js/realtimecat-0.4.0.min.js"></script>
+<script src="js/realtimecat.min.js"></script>
 <script src="js/config.js"></script>
 <script src="js/rtcat-utils.js"></script>
 <script>
@@ -44,22 +44,18 @@
     var remoteLogDiv = document.getElementById('remote-log');
 
     //获取本地视频流
-    stream = new RTCat.Stream();
-    stream.on('accepted',function () {
-        stream.play("local-player");
+    RTCat.createStream().then(function (_stream) {
+        stream = _stream;
+        stream.play('local-player');
         join();
     });
-    stream.init();
+
 
     //进入房间
     function join() {
         getSession().then(function (_session) {
             session = _session;
 
-            session.on("connected", function(){
-                //连入会话，将本地流群发给其他客户端
-                session.send({stream:stream});
-            });
             session.on('in', function (token) {
                 //检测到有客户端进入会话，将本地视频流发送给它
                 session.sendTo({to:token,stream:stream})
@@ -78,12 +74,14 @@
                 receiver.on('log',function (log) {
                     remoteLogDiv.textContent = JSON.stringify(log,null,"        ");
                 });
+
+                receiver.response();
             });
             session.on('error',function (error) {
                 console.log(error);
             });
+            session.send({stream:stream});
 
-            session.connect();
         }).catch(function (_error) {
             console.log(_error);
         });

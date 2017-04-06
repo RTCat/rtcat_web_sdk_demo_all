@@ -11,7 +11,7 @@
 <button id="getLocalStream">获得本地音视频</button>
 <div id="local"></div>
 </body>
-<script src="/js/realtimecat-0.4.0.min.js"></script>
+<script src="/js/realtimecat.min.js"></script>
 <script src="/js/jquery.min.js"></script>
 <script>
     var stream;
@@ -46,14 +46,12 @@
 
 
     bt1.on('click',function () {
-        stream = new RTCat.Stream({
+        stream = RTCat.createStream({
             videoSource:cameras.val(),
-            audioSource:audios.val()});
-        stream.on('accepted', function () {
-            //在 id 为 local 的 div 中播放本地流
+            audioSource:audios.val()}
+        ).then(function (stream) {
             stream.play('local');
         });
-        stream.init();
     });
 
 

@@ -10,26 +10,24 @@
 <div id="local"></div>
 <img src="#">
 </body>
-<script src="/js/realtimecat-0.4.0.min.js"></script>
+<script src="/js/realtimecat.min.js"></script>
 <script>
-    var stream;
+    var localStream;
     var bt1 = document.querySelector('#getLocalStream');
     var bt2 = document.querySelector('#capture');
     var img = document.querySelector('img');
 
     bt1.addEventListener('click',function () {
-        stream = new RTCat.Stream();
-        stream.on('accepted', function () {
-            //在 id 为 local 的 div 中播放本地流
+        RTCat.createStream().then(function (stream) {
+            localStream = stream;
             stream.play('local',{size:{width:300}});
         });
-        stream.init();
     });
 
 
     bt2.addEventListener('click',function () {
-        if(stream){
-           img.src = stream.capture();
+        if(localStream){
+           img.src = localStream.capture();
         }else{
             alert('请先获得本地流')
         }

@@ -15,8 +15,11 @@ function getSession() {
             }
         }).done(function (msg) {
             var token = msg.uuid;
-            var session = new RTCat.Session(token);
-            resolve(session);
+            RTCat.createSession(token).then(function (session) {
+                resolve(session);
+            }).catch(function (e) {
+                console.log(e);
+            });
         }).error(function (error) {
             reject(error);
         })
