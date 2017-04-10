@@ -42,6 +42,7 @@
                     //获取远程流后，播放
                     playStream(stream,receiver.getId());
                 });
+                receiver.response();
             });
 
             session.send({stream:stream});

@@ -67,10 +67,13 @@
                 var name = receiver.getSenderToken().substr(0, 7);
                 displayMessage(name, message)
             });
+            receiver.on('receive_file',function (fileName) {
+                receiver.responseFile();
+            });
             receiver.on('file', function (file) {
                 file.save();
             });
-//            receiver.response();
+            receiver.response();
         });
         session.send({data:true});
     }).catch(function (error) {
