@@ -48,7 +48,7 @@
     bt1.on('click',function () {
         stream = RTCat.createStream({
             videoSource:cameras.val(),
-            audioSource:audios.val()}
+            audioSource:audios.val(),size:{width:900,height:400}}
         ).then(function (stream) {
             stream.play('local');
         });

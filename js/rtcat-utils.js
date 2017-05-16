@@ -15,6 +15,7 @@ function getSession() {
             }
         }).done(function (msg) {
             var token = msg.uuid;
+            RTCat.setRelay(true,true);
             RTCat.createSession(token).then(function (session) {
                 resolve(session);
             }).catch(function (e) {

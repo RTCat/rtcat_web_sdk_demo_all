@@ -68,9 +68,11 @@
                 displayMessage(name, message)
             });
             receiver.on('receive_file',function (fileName) {
+                console.log("receive_file",fileName);
                 receiver.responseFile();
             });
             receiver.on('file', function (file) {
+                console.log("receiver_file_complete",file);
                 file.save();
             });
             receiver.response();
