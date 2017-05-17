@@ -1,6 +1,20 @@
 V0.5
 
-1. 删除 ``Stream``和 ``Session`` 的直接构造方式，必须使用 ``RTCat.createStream`` 和 ``RTCat.createSession`` 创建对象
+1. 删除 ``Stream``和 ``Session`` 的直接构造方式，必须使用 ``RTCat.createStream`` 和 ``RTCat.createSession`` 创建对象，
+    不需要监听 ``stream.on("accept")`` 和 ``session.on("connected")`` 事件。
+    ```js
+    RTCat.createStream({type:RTCat.STREAM_TYPE.AV,size:{width:400,height:400}}
+            ).then(function (stream) {
+                stream.play('local');
+            });
+
+    RTCat.createSession(token).then(function (session) {
+                    //todo
+                }).catch(function (e) {
+                    console.log(e);
+                });
+
+    ```
 2. 修改 ``Stream`` 的构造方法中的 ``type`` 参数类型，修改为枚举类型 ``RTCat.STREAM_TYPE``
 3. ``Receiver`` 增加方法 ``response`` 需要在 ``Session`` 监听到 ``Receiver``事件后，使用该方法，确认回应请求，与另一端的 ``Sender`` 进行连接。
 
