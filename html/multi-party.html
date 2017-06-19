@@ -22,7 +22,7 @@
     var session,stream;
 
     //获取本地视频流
-    RTCat.createStream().then(function (_stream) {
+    RTCat.createStream({size:{width:400,height:400}}).then(function (_stream) {
         stream = _stream;
         stream.play("local");
         join();
