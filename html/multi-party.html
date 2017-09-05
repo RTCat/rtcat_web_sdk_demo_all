@@ -21,6 +21,7 @@
 <script>
     var session,stream;
 
+    RTCat.setRelay(true,true);
     //获取本地视频流
     RTCat.createStream({size:{width:400,height:400}}).then(function (_stream) {
         stream = _stream;
