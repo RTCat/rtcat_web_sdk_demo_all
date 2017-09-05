@@ -4,6 +4,9 @@
 ## 说明
 此样例用于演示使用`实时猫SDK`主要功能，访问实时猫开发者文档，查看[样例代码说明](http://docs.shishimao.com/03.%20web/03.%20demo.html)。
 
+## SDK文档
+[文档](/docs/index.html)位于 `docs` 文件夹中 ,请使用浏览器打开
+
 ## 功能
 1. 检测浏览器兼容性
 2. 获取本地音视频
@@ -12,6 +15,7 @@
 5. 文字聊天和文件传输
 6. 错误信息和日志
 7. 高级主题：屏幕分享
+8. 高级主题：SFU
 
 ## 使用
 1. `git clone https://github.com/RTCat/rtcat_web_sdk_demo_all.git`

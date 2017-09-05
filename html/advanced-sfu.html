@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SFU</title>
+</head>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/realtimecat.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/rtcat-utils.js"></script>
+
+<body>
+<button id="bt_start" onclick="start()">开始</button>
+<button id="bt_publish" onclick="turnPublish()" disabled="disabled">开始推流</button>
+<div id="local"></div>
+<div id="remotes"></div>
+</body>
+
+<script>
+    var tag = "**test-sfu**";
+    var serverUrl = "wss://sfu.turn.rtcat.cn:8899";
+    var stream,session,token,publisher;
+    var sessionSel = document.getElementById("sel_session" );
+    var routeSel = document.getElementById("sel_route");
+    var publishBt = document.getElementById("bt_publish");
+    var startBt = document.getElementById("bt_start");
+
+    function start(){
+        startBt.disabled = true;
+        getToken().then(function (_token) {
+            token = _token;
+            log("my token is " + token);
+            getStream();
+        }).catch(function (e) {
+            loge(e);
+        });
+    }
+
+
+    function getStream() {
+        RTCat.createStream({
+            size:{width:100,height:100},
+            type:RTCat.STREAM_TYPE.AV
+        }).then(function (s) {
+            stream = s;
+            connect(token);
+            stream.play('local',{size:{width:100,height:100}});
+        });
+    }
+
+    function turnPublish() {
+        publishBt.disabled = true;
+
+        if(!publisher){
+            publisher = session.createPublisher(stream);
+            publisher.on("connected",function () {
+                log("publisher connected");
+            });
+            publisher.on("closed",function () {
+                log("publisher closed")
+            });
+            publisher.on("log",function (_log) {
+//                log("publisher log: " + JSON.stringify(_log));
+            });
+
+            session.publish(publisher).then(function (publisher) {
+                log("session publish success");
+                publishBt.disabled = false;
+            }).catch(function (e) {
+                loge(e);
+            });
+            publishBt.textContent = "停止推流"
+
+        }else {
+            session.unPublish(publisher).then(function (publisher) {
+                log("session unpublish success");
+                publishBt.disabled = false;
+            }).catch(function (e) {
+                loge(e);
+            });
+
+            publisher = null;
+            publishBt.textContent = "开始推流";
+        }
+    }
+
+    function createSubscribe(tokenId){
+        let id = "subscribe_" + tokenId;
+        let div = document.createElement("div");
+        div.id = id;
+
+        let text = document.createElement("output");
+        text.textContent = tokenId;
+        let br = document.createElement("br");
+        let button = document.createElement("button");
+        button.textContent = "开始订阅";
+
+        div.appendChild(text);
+        div.appendChild(button);
+        div.appendChild(br);
+
+        document.body.appendChild(div);
+
+        let subscriber;
+        let stream;
+
+        button.onclick = function () {
+            button.disabled = true;
+            if(!subscriber){
+                let _subscriber = session.createSubscriber(tokenId);
+                subscriber = _subscriber;
+                _subscriber.on("connected",function () {
+                    log("subscriber(" + _subscriber.tokenId + ") connected");
+                });
+
+                _subscriber.on("closed",function () {
+                    log("subscriber(" + _subscriber.tokenId + ") closed");
+                });
+
+                _subscriber.on("stream",function (_stream) {
+                    stream = _stream;
+                    stream.play(id,{size:{width:100,height:100}});
+                    log("subscriber(" + _subscriber.tokenId + ") stream");
+                });
+
+                _subscriber.on("log",function (_log) {
+//                    log(`subscriber(${tokenId}) log: ${JSON.stringify(_log)}`);
+                });
+
+                session.subscribe(_subscriber).then(function () {
+                    log("session subscribe success " + subscriber.tokenId);
+                    button.disabled = false;
+                }).catch(function(e){
+                    loge(e);
+                });
+                button.textContent = "停止订阅";
+            }else {
+                session.unSubscribe(subscriber).then(function () {
+                    log("session unsubscribe success " + subscriber.tokenId);
+                    subscriber = null;
+                    button.disabled = false;
+                }).catch(function (e) {
+                    loge(e);
+                });
+
+                if(stream){
+                    stream.stop();
+                }
+                button.textContent = "开始订阅"
+            }
+        };
+    }
+
+    function connect(token) {
+        session = RTCat.createSFUSession(token,{url:serverUrl});
+        session.on("connected",function (routes) {
+            log("session connect");
+            log("routes :" + JSON.stringify(routes));
+            publishBt.disabled = false;
+        });
+
+        session.on("disconnected",function () {
+            log("session disconnect")
+        });
+
+        session.on("published",function (tokenId) {
+            log("session published: "+ tokenId );
+
+            createSubscribe(tokenId)
+        });
+
+        session.on("unpublished",function (tokenId) {
+            log("session unpublished: " + tokenId);
+            let id = "subscribe_" + tokenId;
+            let div = document.getElementById(id);
+            if(div){
+                document.body.removeChild(div);
+            }
+        });
+
+        session.on("error_msg",function (msg) {
+            console.log(msg);
+            session.disconnect();
+            connect(token);
+        });
+
+        session.connect();
+    }
+
+
+    function log(msg) {
+        console.log(tag,msg);
+    }
+
+    function loge(e) {
+        console.error(tag,e);
+    }
+
+
+
+
+
+</script>
+</html>

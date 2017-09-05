@@ -2,6 +2,22 @@
 
 function getSession() {
     return new Promise(function (resolve, reject) {
+        getToken().then(function (token) {
+            RTCat.setRelay(true,true);
+            RTCat.createSession(token).then(function (session) {
+                resolve(session);
+            }).catch(function (e) {
+                reject(e);
+            });
+        }).catch(function (e) {
+            reject(e);
+        });
+    });
+}
+
+
+function getToken() {
+    return new Promise(function(resolve,reject){
         $.ajax({
             'url':token_url,
             'method':'POST',
@@ -15,17 +31,14 @@ function getSession() {
             }
         }).done(function (msg) {
             var token = msg.uuid;
-            RTCat.setRelay(true,true);
-            RTCat.createSession(token).then(function (session) {
-                resolve(session);
-            }).catch(function (e) {
-                console.log(e);
-            });
+            resolve(token);
         }).error(function (error) {
             reject(error);
-        })
+        });
     });
 }
+
+
 
 function playStream(stream,id) {
     var divId = 'video-'+id;
